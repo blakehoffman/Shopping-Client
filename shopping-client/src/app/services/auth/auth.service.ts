@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 
 import { environment } from 'src/environments/environment';
 import { Observable, throwError } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
-import { Login } from 'src/app/models/login';
-import { AuthenticationTokens } from 'src/app/models/authentication-tokens';
+import { catchError, tap } from 'rxjs/operators';
+import { Login } from 'src/app/dtos/login';
+import { AuthenticationTokens } from 'src/app/dtos/authentication-tokens';
 
 @Injectable({
     providedIn: 'root'

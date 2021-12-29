@@ -35,13 +35,13 @@ export class AuthInterceptor implements HttpInterceptor {
 		}
 
 		if (this.isRefreshing) {
-			return this.refreshTokenSubject
-				.pipe(
-					filter(token => token != null),
-					take(1),
-					switchMap(jwt => {
-						return next?.handle(this.addAuthHeader(request, jwt))
-					}));
+			return this.refreshTokenSubject.pipe(
+				filter(token => token != null),
+				take(1),
+				switchMap(jwt => {
+					return next?.handle(this.addAuthHeader(request, jwt))
+				})
+			);
 		}
 		else {
 			this.isRefreshing = true;
@@ -49,14 +49,15 @@ export class AuthInterceptor implements HttpInterceptor {
 			var refreshToken = this.auth.getRefreshToken();
 			var refreshUrl = `${environment.baseUrl}authentication/refresh`;
 
-			return this.http.post<any>(refreshUrl, refreshToken)
-				.pipe(switchMap((tokens) => {
+			return this.http.post<any>(refreshUrl, refreshToken).pipe(
+				switchMap((tokens) => {
 					this.isRefreshing = false;
 					this.refreshTokenSubject.next(tokens.accessToken);
 					this.auth.setTokens(tokens);
 
 					return next.handle(this.addAuthHeader(request, tokens.accessToken));
-				}));
+				})
+			);
 		}
 
 	}
