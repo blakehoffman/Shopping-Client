@@ -9,16 +9,17 @@ import { Alert } from 'src/app/models/alert';
 })
 export class AlertService {
 
-    private defaultAlertId = AlertSettings.INFO;
+    private defaultAlertType = AlertSettings.INFO;
     private subject = new BehaviorSubject<Alert | undefined>(undefined);
 
     alert(alert: Alert): void {
-        alert.id = alert.id || this.defaultAlertId;
+        alert.alertType = alert.alertType || this.defaultAlertType;
+        console.log(alert);
         this.subject.next(alert);
     }
 
-    clear(id = this.defaultAlertId): void {
-        this.subject.next(new Alert({ id }));
+    clear(alertType = this.defaultAlertType): void {
+        this.subject.next(new Alert({ alertType: alertType }));
     }
 
     error(message: string, options?: any): void {
@@ -29,8 +30,8 @@ export class AlertService {
         this.alert(new Alert({ ...options, alertType: AlertSettings.INFO, message }))
     }
 
-    onAlert(id = this.defaultAlertId): Observable<Alert | undefined> {
-        return this.subject.asObservable().pipe(filter(x => x != undefined && x.id == id));
+    onAlert(alertType = this.defaultAlertType): Observable<Alert | undefined> {
+        return this.subject.asObservable().pipe(filter(x => x != undefined && x.alertType == alertType));
     }
 
     success(message: string, options?: any): void {

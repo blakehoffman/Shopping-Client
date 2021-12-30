@@ -5,9 +5,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ProductsPageComponent } from './pages/shopping/products/products.page/products.page.component';
-import { LoginPageComponent } from './pages/auth/login/login.page/login.page.component';
+import { LoginPageComponent } from './pages/auth/login/login.page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AlertComponent } from './components/alert/alert/alert.component';
+import { AlertComponent } from './components/alert/alert.component';
 
 @NgModule({
     declarations: [

@@ -5,23 +5,24 @@ import { Alert } from 'src/app/models/alert';
 import { AlertService } from 'src/app/services/alert/alert.service';
 
 @Component({
-    selector: 'app-alert',
+    selector: 'alert',
     templateUrl: './alert.component.html',
     styleUrls: ['./alert.component.css']
 })
 export class AlertComponent implements OnInit {
 
-    private alerts: Alert[] = [];
     private alertSubscription: Subscription | undefined;
 
-    @Input() id: string = AlertSettings.INFO;
+    alerts: Alert[] = [];
+    @Input() alertType: string = AlertSettings.INFO;
     @Input() fade = true;
 
     constructor(private alertService: AlertService) { }
 
     ngOnInit(): void {
-        this.alertSubscription = this.alertService.onAlert(this.id)
+        this.alertSubscription = this.alertService.onAlert(this.alertType)
             .subscribe(alert => {
+                console.log(alert);
                 if (!alert) {
                     return;
                 }
@@ -48,7 +49,7 @@ export class AlertComponent implements OnInit {
             return '';
         }
 
-        const classes = ['alert-dismissable'];
+        const classes = ['alert-dismissible'];
 
         const classTypes: { [alertType: string]: string } = {
             [AlertSettings.SUCCESS]: 'alert alert-success',
