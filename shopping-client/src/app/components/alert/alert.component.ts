@@ -22,7 +22,6 @@ export class AlertComponent implements OnInit {
     ngOnInit(): void {
         this.alertSubscription = this.alertService.onAlert(this.alertType)
             .subscribe(alert => {
-                console.log(alert);
                 if (!alert) {
                     return;
                 }

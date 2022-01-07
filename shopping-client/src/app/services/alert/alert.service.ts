@@ -14,7 +14,6 @@ export class AlertService {
 
     alert(alert: Alert): void {
         alert.alertType = alert.alertType || this.defaultAlertType;
-        console.log(alert);
         this.subject.next(alert);
     }
 

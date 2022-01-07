@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../../../services/alert/alert.service';
+import { LoginDTO } from '../../../dtos/login-dto';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
     selector: 'app-login.page',
@@ -10,26 +12,35 @@ import { AlertService } from '../../../services/alert/alert.service';
 export class LoginPageComponent implements OnInit {
 
     form = new FormGroup({
-        emailAddress: new FormControl('', [Validators.email, Validators.required]),
+        username: new FormControl('', [Validators.required]),
         password: new FormControl('', Validators.required)
     });
 
-    get emailAddress() {
-        return this.form.get('emailAddress');
+    get username(): string {
+        return this.form.get('username')?.value;
     }
 
-    get getPassword() {
-        return this.form.get('password');
+    get password(): string {
+        return this.form.get('password')?.value;
     }
 
-    constructor(private alertService: AlertService) { }
+    constructor(
+        private authService: AuthService,
+        private alertService: AlertService) { }
 
     ngOnInit(): void {
 
     }
 
     onSubmit(): void {
+        let isSuccessfulLogin = false;
+        let loginDTO: LoginDTO = {
+            username: this.username,
+            password: this.password
+        };
 
+        this.authService.login(loginDTO)
+            .subscribe(result => isSuccessfulLogin = true);
     }
 
 }

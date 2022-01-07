@@ -4,19 +4,21 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Login } from 'src/app/dtos/login';
-import { AuthenticationTokens } from 'src/app/dtos/authentication-tokens';
+import { LoginDTO } from 'src/app/dtos/login-dto';
+import { AuthenticationTokensDTO } from 'src/app/dtos/authentication-tokens-dto';
+import { AlertService } from '../alert/alert.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-
     private baseUrl = `${environment.baseUrl}authentication`;
     private httpNoIntercept: HttpClient;
-    private tokens: AuthenticationTokens | undefined;
+    private tokens: AuthenticationTokensDTO | undefined;
 
-    constructor(private handler: HttpBackend) {
+    constructor(
+        private handler: HttpBackend,
+        private alertService: AlertService) {
         this.httpNoIntercept = new HttpClient(handler);
     }
 
@@ -30,7 +32,12 @@ export class AuthService {
         return this.tokens?.refreshToken;
     }
 
-    login(loginModel: Login): Observable<AuthenticationTokens> {
+    handleError(error: string): Observable<AuthenticationTokensDTO> {
+        this.alertService.error(error)
+        return throwError(error);
+    }
+
+    login(loginModel: LoginDTO): Observable<AuthenticationTokensDTO> {
         var url = `${this.baseUrl}/login`
         var requestHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
@@ -39,13 +46,14 @@ export class AuthService {
         var requestOptions = {
             headers: requestHeaders
         };
-
-        return this.httpNoIntercept.post<AuthenticationTokens>(url, loginModel, requestOptions).pipe(
+        console.log(url);
+        return this.httpNoIntercept.post<AuthenticationTokensDTO>(url, loginModel, requestOptions).pipe(
             tap(data => {
                 this.tokens = data;
-                localStorage.setItem("jwt", JSON.stringify(data))
+                localStorage.setItem("jwt", JSON.stringify(data));
+                console.log(data);
             }),
-            catchError((error) => throwError(error))
+            catchError((error) => this.handleError(error))
         );
     }
 
@@ -54,7 +62,7 @@ export class AuthService {
         localStorage.removeItem("jwt");
     }
 
-    setTokens(tokens: AuthenticationTokens) {
+    setTokens(tokens: AuthenticationTokensDTO) {
         this.tokens = tokens;
     }
 }
