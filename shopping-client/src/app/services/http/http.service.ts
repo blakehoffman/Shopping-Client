@@ -24,8 +24,9 @@ export class HttpService {
             headers: requestHeaders
         };
 
-        this.http.get<T>(url, requestOptions)
-            .pipe(catchError((error) => throwError(error)));
+        this.http.get<T>(url, requestOptions).pipe(
+            catchError((error) => throwError(error))
+        );
     }
 
     getUnauthorized<T>(url: string, headers: HttpHeaders | undefined): any {
