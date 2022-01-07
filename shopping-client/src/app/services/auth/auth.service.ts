@@ -13,13 +13,11 @@ import { AlertService } from '../alert/alert.service';
 })
 export class AuthService {
     private baseUrl = `${environment.baseUrl}authentication`;
-    private httpNoIntercept: HttpClient;
     private tokens: AuthenticationTokensDTO | undefined;
 
     constructor(
-        private handler: HttpBackend,
+        private readonly http: HttpClient,
         private alertService: AlertService) {
-        this.httpNoIntercept = new HttpClient(handler);
     }
 
     isUserLoggedIn: boolean = false;
@@ -46,12 +44,11 @@ export class AuthService {
         var requestOptions = {
             headers: requestHeaders
         };
-        console.log(url);
-        return this.httpNoIntercept.post<AuthenticationTokensDTO>(url, loginModel, requestOptions).pipe(
+
+        return this.http.post<AuthenticationTokensDTO>(url, loginModel, requestOptions).pipe(
             tap(data => {
                 this.tokens = data;
                 localStorage.setItem("jwt", JSON.stringify(data));
-                console.log(data);
             }),
             catchError((error) => this.handleError(error))
         );

@@ -1,10 +1,12 @@
-import { HttpClient, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { HttpClient, HttpContextToken, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { catchError, filter, switchMap, take } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 
 import { AuthService } from "../services/auth/auth.service";
+
+export const USE_AUTHENTICATION = new HttpContextToken<boolean>(() => true);
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -66,7 +68,7 @@ export class AuthInterceptor implements HttpInterceptor {
 		const accessToken = this.auth.getAccessToken();
 		var authRequest = request;
 
-		if (accessToken != undefined) {
+		if (accessToken != undefined && request.context.get(USE_AUTHENTICATION)) {
 			authRequest = this.addAuthHeader(request, accessToken);
 		}
 
