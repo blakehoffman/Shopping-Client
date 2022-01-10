@@ -36,12 +36,12 @@ export class AuthService {
     }
 
     login(loginModel: LoginDTO): Observable<AuthenticationTokensDTO> {
-        var url = `${this.baseUrl}/login`
-        var requestHeaders = new HttpHeaders({
+        let url = `${this.baseUrl}/login`
+        let requestHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
         });
 
-        var requestOptions = {
+        let requestOptions = {
             headers: requestHeaders
         };
 

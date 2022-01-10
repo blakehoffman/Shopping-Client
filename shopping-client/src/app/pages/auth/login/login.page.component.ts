@@ -29,7 +29,7 @@ export class LoginPageComponent implements OnInit {
         private alertService: AlertService) { }
 
     ngOnInit(): void {
-
+        
     }
 
     onSubmit(): void {

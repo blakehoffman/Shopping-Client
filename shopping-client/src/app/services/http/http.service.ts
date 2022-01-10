@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpContext, HttpHeaders } from '@angular/common/http';
 
 import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { USE_AUTHENTICATION } from 'src/app/http-interceptors/auth-interceptor';
 
 @Injectable({
@@ -18,21 +18,21 @@ export class HttpService {
         });
     }
 
-    get<T>(url: string, headers: HttpHeaders | undefined): any {
-        var requestHeaders = headers ?? this.defaultHeaders;
-        var requestOptions = {
+    get<T>(url: string, headers?: HttpHeaders): Observable<any> {
+        let requestHeaders = headers ?? this.defaultHeaders;
+        let requestOptions = {
             headers: requestHeaders
         };
 
-        this.http.get<T>(url, requestOptions).pipe(
+        return this.http.get<T>(url, requestOptions).pipe(
             catchError((error) => throwError(error))
         );
     }
 
-    getUnauthorized<T>(url: string, headers: HttpHeaders | undefined): any {
-        var requestHeaders = headers ?? this.defaultHeaders;
+    getUnauthorized<T>(url: string, headers?: HttpHeaders): Observable<any> {
+        let requestHeaders = headers ?? this.defaultHeaders;
 
-        this.http.get<T>(
+        return this.http.get<T>(
             url,
             {
                 context: new HttpContext().set(USE_AUTHENTICATION, false),
@@ -43,21 +43,21 @@ export class HttpService {
             );
     }
 
-    post<T>(url: string, body: string, headers: HttpHeaders | undefined): any {
-        var requestHeaders = headers ?? this.defaultHeaders;
-        var requestOptions = {
+    post<T>(url: string, body: string, headers?: HttpHeaders): Observable<any> {
+        let requestHeaders = headers ?? this.defaultHeaders;
+        let requestOptions = {
             headers: requestHeaders
         };
 
-        this.http.post<T>(url, body, requestOptions).pipe(
+        return this.http.post<T>(url, body, requestOptions).pipe(
             catchError((error) => throwError(error))
         );
     }
 
-    postUnauthorized<T>(url: string, body: string, headers: HttpHeaders | undefined): any {
-        var requestHeaders = headers ?? this.defaultHeaders;
+    postUnauthorized<T>(url: string, body: string, headers?: HttpHeaders): Observable<any> {
+        let requestHeaders = headers ?? this.defaultHeaders;
 
-        this.http.post<T>(
+        return this.http.post<T>(
             url,
             body,
             {
