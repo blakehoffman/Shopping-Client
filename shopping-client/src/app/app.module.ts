@@ -9,6 +9,7 @@ import { LoginPageComponent } from './pages/auth/login/login.page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AlertComponent } from './components/alert/alert.component';
 import { AuthInterceptor } from './http-interceptors/auth-interceptor';
+import { ProductComponent } from './components/product/product/product.component';
 
 @NgModule({
     declarations: [
@@ -16,6 +17,7 @@ import { AuthInterceptor } from './http-interceptors/auth-interceptor';
         ProductsPageComponent,
         LoginPageComponent,
         AlertComponent,
+        ProductComponent,
     ],
     imports: [
         AppRoutingModule,

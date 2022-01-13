@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { HttpService } from '../http/http.service';
 
 @Injectable({
@@ -7,11 +8,17 @@ import { HttpService } from '../http/http.service';
 })
 export class ApiService {
 
-    private readonly apiUrl = 'https://localhost:44309/';
+    private readonly apiUrl = `${environment.baseUrl}`;
 
     constructor(private httpService: HttpService) { }
 
     getProducts(categoryId?: string): Observable<any> {
-        return this.httpService.getUnauthorized(`${this.apiUrl}/products`);
+        let urlParams = '';
+
+        if (categoryId) {
+            urlParams = `?categoryId=${categoryId}`;
+        }
+
+        return this.httpService.getUnauthorized(`${this.apiUrl}products${urlParams}`);
     }
 }
