@@ -48,8 +48,8 @@ export class AuthInterceptor implements HttpInterceptor {
 		else {
 			this.isRefreshing = true;
 			this.refreshTokenSubject.next(null);
-			var refreshToken = this.auth.getRefreshToken();
-			var refreshUrl = `${environment.baseUrl}authentication/refresh`;
+			let refreshToken = this.auth.getRefreshToken();
+			let refreshUrl = `${environment.baseUrl}authentication/refresh`;
 
 			return this.http.post<any>(refreshUrl, refreshToken).pipe(
 				switchMap((tokens) => {
@@ -66,7 +66,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
 	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
 		const accessToken = this.auth.getAccessToken();
-		var authRequest = request;
+		let authRequest = request;
 
 		if (accessToken != undefined && request.context.get(USE_AUTHENTICATION)) {
 			authRequest = this.addAuthHeader(request, accessToken);
