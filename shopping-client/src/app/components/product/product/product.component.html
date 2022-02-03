@@ -1,15 +1,17 @@
-<div>
-    <div class="row">
-        <div>
-            <b class="title">{{product?.name}}</b>
+<div class="card mt-3">
+    <div class="card-body">
+        <h5 class="card-title">{{product?.name}}</h5>
+        <div class="row">
+            <div class="col">
+                <label>{{product?.description}}</label>
+            </div>
+            <div class="col text-end fw-bold">
+                <label>${{product?.price}}</label>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <label>{{product?.description}}</label>
-        </div>
-        <div class="col">
-            <label>{{product?.price}}</label>
-        </div>
+        <a
+            href="#"
+            class="stretched-link"
+        ></a>
     </div>
 </div>
