@@ -8,9 +8,13 @@ import { HttpService } from '../http/http.service';
 })
 export class ApiService {
 
-    private readonly apiUrl = `${environment.baseUrl}`;
+    private readonly _apiUrl = `${environment.baseUrl}`;
 
-    constructor(private httpService: HttpService) { }
+    constructor(private _httpService: HttpService) { }
+
+    getProduct(productId: string) {
+        return this._httpService.getUnauthorized(`${this._apiUrl}products/${productId}`);
+    }
 
     getProducts(categoryId?: string): Observable<any> {
         let urlParams = '';
@@ -19,6 +23,6 @@ export class ApiService {
             urlParams = `?categoryId=${categoryId}`;
         }
 
-        return this.httpService.getUnauthorized(`${this.apiUrl}products${urlParams}`);
+        return this._httpService.getUnauthorized(`${this._apiUrl}products${urlParams}`);
     }
 }
