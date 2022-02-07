@@ -13,11 +13,11 @@ export class ProductsPageComponent implements OnInit {
     products: ProductDTO[] = [];
 
     constructor(
-        private apiService: ApiService,
-        private alertService: AlertService) { }
+        private _apiService: ApiService,
+        private _alertService: AlertService) { }
 
     ngOnInit(): void {
-        this.apiService.getProducts()
+        this._apiService.getProducts()
             .subscribe(result => this.products = result)
     }
 
