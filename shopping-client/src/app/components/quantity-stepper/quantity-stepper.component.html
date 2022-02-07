@@ -1,0 +1,26 @@
+<div class="quantity-stepper round row align-items-center">
+    <div class="col-4">
+        <button
+            type="button"
+            class="btn btn-primary btn-sm round shadow-none"
+            (click)="decrementQuantity()"
+        >
+            <i
+                class="bi bi-dash-circle"
+                style
+            ></i>
+        </button>
+    </div>
+    <div class="col-4">
+        <span class="stepper-text font-weight-bold">{{quantity}}</span>
+    </div>
+    <div class="col-4">
+        <button
+            type="button"
+            class="btn btn-primary btn-sm round shadow-none"
+            (click)="incrementQuantity()"
+        >
+            <i class="bi bi-plus-circle"></i>
+        </button>
+    </div>
+</div>

@@ -1,6 +1,11 @@
 .center-div {
     margin: 0 auto;
 }
+
 .clickable {
     cursor: pointer;
+}
+
+.round {
+  border-radius: 30px !important;
 }

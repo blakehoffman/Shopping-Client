@@ -11,6 +11,7 @@ import { AlertComponent } from './components/alert/alert.component';
 import { AuthInterceptor } from './http-interceptors/auth-interceptor';
 import { ProductComponent } from './components/product/product/product.component';
 import { ProductPageComponent } from './pages/shopping/product/product.page.component';
+import { QuantityStepperComponent } from './components/quantity-stepper/quantity-stepper.component';
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import { ProductPageComponent } from './pages/shopping/product/product.page.comp
         AlertComponent,
         ProductComponent,
         ProductPageComponent,
+        QuantityStepperComponent,
     ],
     imports: [
         AppRoutingModule,
