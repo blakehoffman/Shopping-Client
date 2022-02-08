@@ -12,6 +12,7 @@ import { AuthInterceptor } from './http-interceptors/auth-interceptor';
 import { ProductComponent } from './components/product/product/product.component';
 import { ProductPageComponent } from './pages/shopping/product/product.page.component';
 import { QuantityStepperComponent } from './components/quantity-stepper/quantity-stepper.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { QuantityStepperComponent } from './components/quantity-stepper/quantity
         ProductComponent,
         ProductPageComponent,
         QuantityStepperComponent,
+        NavbarComponent,
     ],
     imports: [
         AppRoutingModule,
