@@ -2,7 +2,7 @@ import { HttpBackend, HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { environment } from 'src/environments/environment';
-import { Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { LoginDTO } from 'src/app/dtos/login-dto';
 import { AuthenticationTokensDTO } from 'src/app/dtos/authentication-tokens-dto';
@@ -13,14 +13,17 @@ import { AlertService } from '../alert/alert.service';
 })
 export class AuthService {
     private baseUrl = `${environment.baseUrl}authentication`;
+    private isLoggedInSubject = new BehaviorSubject<boolean>(false);
     private tokens: AuthenticationTokensDTO | undefined;
 
     constructor(
         private readonly http: HttpClient,
         private alertService: AlertService) {
     }
-
-    isUserLoggedIn: boolean = false;
+    
+    get isLoggedInChange(): Observable<boolean> {
+        return this.isLoggedInSubject.asObservable();
+    }
 
     getAccessToken(): string | undefined {
         return this.tokens?.accessToken;
@@ -49,12 +52,14 @@ export class AuthService {
             tap(data => {
                 this.tokens = data;
                 localStorage.setItem("jwt", JSON.stringify(data));
+                this.isLoggedInSubject.next(true);
             }),
             catchError((error) => this.handleError(error))
         );
     }
 
     logout() {
+        this.isLoggedInSubject.next(false);
         this.tokens = undefined;
         localStorage.removeItem("jwt");
     }

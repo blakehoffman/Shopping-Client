@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../../../services/alert/alert.service';
 import { LoginDTO } from '../../../dtos/login-dto';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-login.page',
@@ -16,6 +17,11 @@ export class LoginPageComponent implements OnInit {
         password: new FormControl('', Validators.required)
     });
 
+    constructor(
+        private _authService: AuthService,
+        private _alertService: AlertService,
+        private _router: Router) { }
+
     get username(): string {
         return this.form.get('username')?.value;
     }
@@ -23,24 +29,19 @@ export class LoginPageComponent implements OnInit {
     get password(): string {
         return this.form.get('password')?.value;
     }
-
-    constructor(
-        private authService: AuthService,
-        private alertService: AlertService) { }
-
+    
     ngOnInit(): void {
         
     }
 
     onSubmit(): void {
-        let isSuccessfulLogin = false;
         let loginDTO: LoginDTO = {
             username: this.username,
             password: this.password
         };
 
-        this.authService.login(loginDTO)
-            .subscribe(result => isSuccessfulLogin = true);
+        this._authService.login(loginDTO)
+            .subscribe(result => this._router.navigate(['/products/']));
     }
 
 }

@@ -15,8 +15,8 @@ export class AuthInterceptor implements HttpInterceptor {
 	private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
 	constructor(
-		private auth: AuthService,
-		private http: HttpClient
+		private _authService: AuthService,
+		private _http: HttpClient
 	) { }
 
 	addAuthHeader(request: HttpRequest<any>, accessToken: string) {
@@ -29,6 +29,11 @@ export class AuthInterceptor implements HttpInterceptor {
 		});
 
 		return authReq;
+	}
+
+	handleRefreshError(error: string): Observable<any> {
+		this._authService.logout();
+		return throwError(error);
 	}
 
 	handleResponseError(error: any, request: HttpRequest<any>, next: HttpHandler): Observable<any> {
@@ -48,24 +53,25 @@ export class AuthInterceptor implements HttpInterceptor {
 		else {
 			this.isRefreshing = true;
 			this.refreshTokenSubject.next(null);
-			let refreshToken = this.auth.getRefreshToken();
+			let refreshToken = this._authService.getRefreshToken();
 			let refreshUrl = `${environment.baseUrl}authentication/refresh`;
 
-			return this.http.post<any>(refreshUrl, refreshToken).pipe(
+			return this._http.post<any>(refreshUrl, refreshToken).pipe(
 				switchMap((tokens) => {
 					this.isRefreshing = false;
 					this.refreshTokenSubject.next(tokens.accessToken);
-					this.auth.setTokens(tokens);
+					this._authService.setTokens(tokens);
 
 					return next.handle(this.addAuthHeader(request, tokens.accessToken));
-				})
+				}),
+				catchError((error) => this.handleRefreshError(error))
 			);
 		}
 
 	}
 
 	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
-		const accessToken = this.auth.getAccessToken();
+		const accessToken = this._authService.getAccessToken();
 		let authRequest = request;
 
 		if (accessToken != undefined && request.context.get(USE_AUTHENTICATION)) {
