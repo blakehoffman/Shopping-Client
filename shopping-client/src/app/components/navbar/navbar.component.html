@@ -36,7 +36,19 @@
             id="navbarSupportedContent"
         >
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item" *ngIf="!isUserLoggedIn">
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        aria-current="page"
+                        href="/cart"
+                    >
+                        <i class="bi bi-cart"></i>
+                    </a>
+                </li>
+                <li
+                    class="nav-item"
+                    *ngIf="!isUserLoggedIn"
+                >
                     <a
                         class="nav-link"
                         aria-current="page"
@@ -44,6 +56,42 @@
                     >
                         Login
                     </a>
+                </li>
+                <li
+                    class="nav-item dropdown"
+                    *ngIf="isUserLoggedIn"
+                >
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="navbarDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        Account
+                    </a>
+                    <ul
+                        class="dropdown-menu"
+                        aria-labelledby="navbarDropdown"
+                    >
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="/account/settings"
+                            >
+                                Settings
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                class="dropdown-item clickable"
+                                (click)="logout()"
+                            >
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
