@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { AddCartProductDTO } from 'src/app/dtos/add-cart-product-dto';
+import { CartDTO } from 'src/app/dtos/cart-dto';
 import { HttpResultDTO } from 'src/app/dtos/http-result-dto';
+import { ProductDTO } from 'src/app/dtos/product-dto';
 import { environment } from 'src/environments/environment';
 import { AlertService } from '../alert/alert.service';
 import { HttpService } from '../http/http.service';
@@ -34,7 +36,7 @@ export class ApiService {
             );
     }
 
-    createCart(id: string): Observable<any> {
+    createCart(id: string): Observable<HttpResultDTO> {
         return this._httpService.post(`${this._apiUrl}carts/create`, id)
             .pipe(
                 tap(data => {
@@ -46,7 +48,7 @@ export class ApiService {
             );
     }
 
-    getCart(): Observable<any> {
+    getCart(): Observable<CartDTO> {
         return this._httpService.get(`${this._apiUrl}carts`)
             .pipe(
                 tap(data => {
@@ -58,7 +60,7 @@ export class ApiService {
             );
     }
 
-    getProduct(productId: string): Observable<any> {
+    getProduct(productId: string): Observable<ProductDTO> {
         return this._httpService.getUnauthorized(`${this._apiUrl}products/${productId}`)
             .pipe(
                 tap(data => {
@@ -70,7 +72,7 @@ export class ApiService {
             );
     }
 
-    getProducts(categoryId?: string): Observable<any> {
+    getProducts(categoryId?: string): Observable<Array<ProductDTO>> {
         let urlParams = '';
 
         if (categoryId) {
@@ -88,7 +90,7 @@ export class ApiService {
             );
     }
 
-    deleteCartProduct(cartID: string, productID: string) {
+    deleteCartProduct(cartID: string, productID: string): Observable<HttpResultDTO> {
         return this._httpService.post(`${this._apiUrl}carts/${cartID}/products/delete`, productID)
             .pipe(
                 tap(data => {
