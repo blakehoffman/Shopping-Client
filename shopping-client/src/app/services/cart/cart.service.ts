@@ -25,8 +25,10 @@ export class CartService {
     }
 
     private addProductToLocalCart(cartProduct: CartProductDTO): void {
+        let foundProduct = this.products.find(product => product.id == cartProduct.id);
+
         //if product already exists in cart, don't add duplicate.  Just add new quantity
-        if (cartProduct) {
+        if (foundProduct) {
             cartProduct.quantity += cartProduct.quantity;
         }
         else {
