@@ -9,7 +9,7 @@ import { LoginPageComponent } from './pages/auth/login/login.page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AlertComponent } from './components/alert/alert.component';
 import { AuthInterceptor } from './http-interceptors/auth-interceptor';
-import { ProductComponent } from './components/product/product/product.component';
+import { ProductComponent } from './components/product/product.component';
 import { ProductPageComponent } from './pages/shopping/product/product.page.component';
 import { QuantityStepperComponent } from './components/quantity-stepper/quantity-stepper.component';
 import { NavbarComponent } from './components/navbar/navbar.component';

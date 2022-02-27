@@ -16,9 +16,11 @@ export class AuthService {
     private isLoggedInSubject = new BehaviorSubject<boolean>(localStorage.getItem("jwt") != null);
     private tokens: AuthenticationTokensDTO | undefined;
 
+    isLoggedIn: boolean = false;
+
     constructor(
-        private readonly http: HttpClient,
-        private alertService: AlertService) {
+        private readonly _http: HttpClient,
+        private _alertService: AlertService) {
     }
     
     get isLoggedInChange(): Observable<boolean> {
@@ -33,8 +35,8 @@ export class AuthService {
         return this.tokens?.refreshToken;
     }
 
-    handleError(error: string): Observable<AuthenticationTokensDTO> {
-        this.alertService.error(error)
+    handleError(error: any): Observable<AuthenticationTokensDTO> {
+        this._alertService.error(error.message)
         return throwError(error);
     }
 
@@ -48,10 +50,11 @@ export class AuthService {
             headers: requestHeaders
         };
 
-        return this.http.post<AuthenticationTokensDTO>(url, loginModel, requestOptions).pipe(
+        return this._http.post<AuthenticationTokensDTO>(url, loginModel, requestOptions).pipe(
             tap(data => {
                 this.tokens = data;
                 localStorage.setItem("jwt", JSON.stringify(data));
+                this.isLoggedIn = true;
                 this.isLoggedInSubject.next(true);
             }),
             catchError((error) => this.handleError(error))
@@ -59,6 +62,7 @@ export class AuthService {
     }
 
     logout() {
+        this.isLoggedIn = false;
         this.isLoggedInSubject.next(false);
         this.tokens = undefined;
         localStorage.removeItem("jwt");
