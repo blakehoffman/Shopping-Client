@@ -12,7 +12,6 @@ import { CartService } from 'src/app/services/cart/cart.service';
     styleUrls: ['./product.page.component.css']
 })
 export class ProductPageComponent implements OnInit {
-
     product: ProductDTO | undefined;
     quantity: number = 0;
 
@@ -29,7 +28,7 @@ export class ProductPageComponent implements OnInit {
 
         if (!this.product && productId) {
             this._apiService.getProduct(productId)
-                .subscribe(result => this.product = result)
+                .subscribe(result => this.product = result);
         }
     }
 

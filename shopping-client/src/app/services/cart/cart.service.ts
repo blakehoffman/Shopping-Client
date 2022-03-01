@@ -5,7 +5,7 @@ import { CartProductDTO } from 'src/app/dtos/cart-product-dto';
 import { ApiService } from '../api/api.service';
 import { AuthService } from '../auth/auth.service';
 import { v4 } from 'uuid';
-import { catchError, map, mergeMap, tap, } from 'rxjs/operators';
+import { catchError, finalize, map, mergeMap, tap } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
 import { AlertService } from '../alert/alert.service';
 import { AddCartProductDTO } from 'src/app/dtos/add-cart-product-dto';
@@ -26,16 +26,18 @@ export class CartService {
 
     private addProductToLocalCart(cartProduct: CartProductDTO): void {
         let foundProduct = this.products.find(product => product.id == cartProduct.id);
-
+        
         //if product already exists in cart, don't add duplicate.  Just add new quantity
         if (foundProduct) {
-            cartProduct.quantity += cartProduct.quantity;
+            foundProduct.quantity += cartProduct.quantity;        
         }
         else {
             this.products.push(cartProduct);
         }
+        
+        this.updateCartInLocalStorage();
     }
-
+    
     private deleteProductFromLocalCart(cartProduct: CartProductDTO): void {
         this.products.splice(this.products.indexOf(cartProduct), 1);
         this.updateCartInLocalStorage();
@@ -49,7 +51,7 @@ export class CartService {
     private createCart(): Observable<boolean> {
         let newCartId = v4();
 
-        return this._apiService.createCart(newCartId)
+        return this._apiService.createCart(newCartId, false)
             .pipe(
                 map(data => {
                     if (data.succeeded) {
@@ -67,7 +69,7 @@ export class CartService {
     }
 
     private getUserCart(): Observable<CartDTO> {
-        return this._apiService.getCart()
+        return this._apiService.getCart(false)
             .pipe(
                 catchError((error) => {
                     return this.handleError(error);
@@ -102,7 +104,7 @@ export class CartService {
                 quantity: product.quantity
             };
 
-            this._apiService.addProductToCart((this.cartId as string), addCartProductDTO);
+            this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false);
             this.updateCartInLocalStorage();
         }
     }
@@ -135,7 +137,7 @@ export class CartService {
                                     this.products = cart.products;
                                 }
 
-                                return this._apiService.addProductToCart((this.cartId as string), addCartProductDTO);
+                                return this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false);
                             }),
                             map(httpResult => {
                                 if (!httpResult.succeeded) {
@@ -147,13 +149,14 @@ export class CartService {
                             catchError((error) => {
                                 observer.error(error);
                                 return this.handleError(error)
-                            })
+                            }),
+                            finalize(() => this.addProductToLocalCart(cartProductToAdd))
                         ).subscribe();
 
                     this.addProductToLocalCart(cartProductToAdd);
                 }
                 else {
-                    this._apiService.addProductToCart((this.cartId as string), addCartProductDTO)
+                    this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false)
                         .pipe(
                             map(httpResult => {
                                 if (!httpResult.succeeded) {
@@ -165,10 +168,9 @@ export class CartService {
                             catchError((error) => {
                                 observer.error(error);
                                 return this.handleError(error);
-                            })
-                    );
-
-                    this.addProductToLocalCart(cartProductToAdd);
+                            }),
+                            finalize(() => this.addProductToLocalCart(cartProductToAdd))
+                        ).subscribe();
                 }
             }
             else {
@@ -190,6 +192,7 @@ export class CartService {
                     mergeMap(userCart => {
                         if (userCart) {
                             this.mergeCarts(userCart);
+                            console.log(userCart);
                             return of(false);
                         }
                         else {
@@ -205,7 +208,7 @@ export class CartService {
                                     quantity: product.quantity
                                 };
 
-                                this._apiService.addProductToCart((this.cartId as string), addCartProductDTO);
+                                this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false);
                             }
                         }
 
@@ -241,7 +244,7 @@ export class CartService {
                                     this.products = cart.products;
                                 }
 
-                                return this._apiService.deleteCartProduct((this.cartId as string), cartProductToRemove.id);
+                                return this._apiService.deleteCartProduct((this.cartId as string), cartProductToRemove.id, false);
                             }),
                             map(httpResult => {
                                 if (!httpResult.succeeded) {
@@ -260,7 +263,7 @@ export class CartService {
                     return;
                 }
                 else {
-                    this._apiService.deleteCartProduct((this.cartId as string), cartProductToRemove.id)
+                    this._apiService.deleteCartProduct((this.cartId as string), cartProductToRemove.id, false)
                         .pipe(
                             tap(httpResult => {
                                 if (!httpResult.succeeded) {

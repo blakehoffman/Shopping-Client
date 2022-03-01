@@ -1,4 +1,4 @@
-import { HttpClient, HttpContextToken, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { HttpClient, HttpContext, HttpContextToken, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { catchError, filter, switchMap, take } from "rxjs/operators";
@@ -37,7 +37,9 @@ export class AuthInterceptor implements HttpInterceptor {
 	}
 
 	handleResponseError(error: any, request: HttpRequest<any>, next: HttpHandler): Observable<any> {
-		if (error.status != 401) {
+		let useAuthentication = request.context.get(USE_AUTHENTICATION);
+		
+		if (error.status != 401 || !useAuthentication) {
 			return throwError(error);
 		}
 

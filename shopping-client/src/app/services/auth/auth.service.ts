@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { environment } from 'src/environments/environment';
@@ -7,6 +7,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { LoginDTO } from 'src/app/dtos/login-dto';
 import { AuthenticationTokensDTO } from 'src/app/dtos/authentication-tokens-dto';
 import { AlertService } from '../alert/alert.service';
+import { HttpService } from '../http/http.service';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +20,7 @@ export class AuthService {
     isLoggedIn: boolean = false;
 
     constructor(
-        private readonly _http: HttpClient,
+        private readonly _httpService: HttpService,
         private _alertService: AlertService) {
     }
     
@@ -42,15 +43,8 @@ export class AuthService {
 
     login(loginModel: LoginDTO): Observable<AuthenticationTokensDTO> {
         let url = `${this.baseUrl}/login`
-        let requestHeaders = new HttpHeaders({
-            'Content-Type': 'application/json',
-        });
 
-        let requestOptions = {
-            headers: requestHeaders
-        };
-
-        return this._http.post<AuthenticationTokensDTO>(url, loginModel, requestOptions).pipe(
+        return this._httpService.postUnauthorized<AuthenticationTokensDTO>(url, JSON.stringify(loginModel)).pipe(
             tap(data => {
                 this.tokens = data;
                 localStorage.setItem("jwt", JSON.stringify(data));
