@@ -24,11 +24,8 @@ export class AuthInterceptor implements HttpInterceptor {
 			return request;
 		}
 
-		let headers = request.headers.set('Authorization', 'Bearer ' + accessToken);
-		headers.set('Access-Control-Allow-Origin', '*');
-
 		const authReq = request.clone({
-			headers: headers,
+			headers: request.headers.set('Authorization', 'Bearer ' + accessToken)
 		});
 
 		return authReq;
