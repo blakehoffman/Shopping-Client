@@ -26,18 +26,18 @@ export class CartService {
 
     private addProductToLocalCart(cartProduct: CartProductDTO): void {
         let foundProduct = this.products.find(product => product.id == cartProduct.id);
-        
+
         //if product already exists in cart, don't add duplicate.  Just add new quantity
         if (foundProduct) {
-            foundProduct.quantity += cartProduct.quantity;        
+            foundProduct.quantity += cartProduct.quantity;
         }
         else {
             this.products.push(cartProduct);
         }
-        
+
         this.updateCartInLocalStorage();
     }
-    
+
     private deleteProductFromLocalCart(cartProduct: CartProductDTO): void {
         this.products.splice(this.products.indexOf(cartProduct), 1);
         this.updateCartInLocalStorage();
@@ -90,27 +90,27 @@ export class CartService {
     }
 
     private mergeCarts(userCart: CartDTO): void {
-            if (this.products.length > 0) {
-                for (let product of this.products) {
-                    let foundProduct = userCart.products.find(userCartProduct => userCartProduct.id == product.id);
+        if (this.products.length > 0) {
+            for (let product of this.products) {
+                let foundProduct = userCart.products.find(userCartProduct => userCartProduct.id == product.id);
 
-                    //only add products that don't exist in the saved user's cart so there are no duplicates
-                    if (!foundProduct) {
-                        userCart.products.push(product);
-                    }
-
-                    //save local products that were not attached to user account
-                    let addCartProductDTO: AddCartProductDTO = {
-                        id: product.id,
-                        quantity: product.quantity
-                    };
-
-                    this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false);
+                //only add products that don't exist in the saved user's cart so there are no duplicates
+                if (!foundProduct) {
+                    userCart.products.push(product);
                 }
+
+                //save local products that were not attached to user account
+                let addCartProductDTO: AddCartProductDTO = {
+                    id: product.id,
+                    quantity: product.quantity
+                };
+
+                this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false);
             }
-            else {
-                this.products = userCart.products;
-            }
+        }
+        else {
+            this.products = userCart.products;
+        }
 
         this.cartId = userCart.id;
         this.updateCartInLocalStorage();
