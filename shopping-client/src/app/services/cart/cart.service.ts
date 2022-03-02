@@ -90,23 +90,30 @@ export class CartService {
     }
 
     private mergeCarts(userCart: CartDTO): void {
-        for (let product of this.products) {
-            let foundProduct = userCart.products.find(userCartProduct => userCartProduct.id == product.id);
+            if (this.products.length > 0) {
+                for (let product of this.products) {
+                    let foundProduct = userCart.products.find(userCartProduct => userCartProduct.id == product.id);
 
-            //only add products that don't exist in the saved user's cart so there are no duplicates
-            if (!foundProduct) {
-                userCart.products.push(product);
+                    //only add products that don't exist in the saved user's cart so there are no duplicates
+                    if (!foundProduct) {
+                        userCart.products.push(product);
+                    }
+
+                    //save local products that were not attached to user account
+                    let addCartProductDTO: AddCartProductDTO = {
+                        id: product.id,
+                        quantity: product.quantity
+                    };
+
+                    this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false);
+                }
+            }
+            else {
+                this.products = userCart.products;
             }
 
-            //save local products that were not attached to user account
-            let addCartProductDTO: AddCartProductDTO = {
-                id: product.id,
-                quantity: product.quantity
-            };
-
-            this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false);
-            this.updateCartInLocalStorage();
-        }
+        this.cartId = userCart.id;
+        this.updateCartInLocalStorage();
     }
 
     private updateCartInLocalStorage() {
@@ -192,7 +199,6 @@ export class CartService {
                     mergeMap(userCart => {
                         if (userCart) {
                             this.mergeCarts(userCart);
-                            console.log(userCart);
                             return of(false);
                         }
                         else {
@@ -218,7 +224,7 @@ export class CartService {
                         observer.error(error);
                         return this.handleError(error)
                     })
-                );
+                ).subscribe();
         });
 
         return observable;

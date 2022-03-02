@@ -1,4 +1,4 @@
-import { HttpClient, HttpContext, HttpContextToken, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { HttpClient, HttpContextToken, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { catchError, filter, switchMap, take } from "rxjs/operators";
@@ -24,8 +24,11 @@ export class AuthInterceptor implements HttpInterceptor {
 			return request;
 		}
 
+		let headers = request.headers.set('Authorization', 'Bearer ' + accessToken);
+		headers.set('Access-Control-Allow-Origin', '*');
+
 		const authReq = request.clone({
-			headers: request.headers.set('Authorization', accessToken)
+			headers: headers,
 		});
 
 		return authReq;
@@ -80,6 +83,7 @@ export class AuthInterceptor implements HttpInterceptor {
 			authRequest = this.addAuthHeader(request, accessToken);
 		}
 
+		console.log(authRequest)
 		return next.handle(authRequest).pipe(
 			catchError(error => this.handleResponseError(error, request, next))
 		);

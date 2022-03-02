@@ -44,7 +44,7 @@ export class LoginPageComponent implements OnInit {
 
         this._authService.login(loginDTO)
             .subscribe(result => {  
-                this._cartService.getUserCartAndMergeExistingCart();
+                this._cartService.getUserCartAndMergeExistingCart().subscribe();
                 this._router.navigate(['/products/']);
             });
     }

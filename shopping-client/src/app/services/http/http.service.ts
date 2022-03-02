@@ -21,7 +21,7 @@ export class HttpService {
     get<T>(url: string, headers?: HttpHeaders): Observable<any> {
         let requestHeaders = headers ?? this.defaultHeaders;
         let requestOptions = {
-            headers: requestHeaders
+            headers: requestHeaders,
         };
 
         return this.http.get<T>(url, requestOptions).pipe(
