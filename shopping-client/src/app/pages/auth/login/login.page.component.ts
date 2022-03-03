@@ -4,6 +4,7 @@ import { AlertService } from '../../../services/alert/alert.service';
 import { LoginDTO } from '../../../dtos/login-dto';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Router } from '@angular/router';
+import { CartService } from 'src/app/services/cart/cart.service';
 
 @Component({
     selector: 'app-login.page',
@@ -20,6 +21,7 @@ export class LoginPageComponent implements OnInit {
     constructor(
         private _authService: AuthService,
         private _alertService: AlertService,
+        private _cartService: CartService,
         private _router: Router) { }
 
     get username(): string {
@@ -41,7 +43,10 @@ export class LoginPageComponent implements OnInit {
         };
 
         this._authService.login(loginDTO)
-            .subscribe(result => this._router.navigate(['/products/']));
+            .subscribe(result => {  
+                this._cartService.getUserCartAndMergeExistingCart().subscribe();
+                this._router.navigate(['/products/']);
+            });
     }
 
 }

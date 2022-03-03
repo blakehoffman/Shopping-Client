@@ -5,11 +5,16 @@
     </div>
     <div class="row mb-2">
         <div class="stepper">
-            <quantity-stepper></quantity-stepper>
+            <quantity-stepper (quantityEvent)="increaseProductQuantity($event)"></quantity-stepper>
         </div>
     </div>
     <div class="row mb-2">
-        <button class="btn btn-primary btn-add-to-cart round">Add to Cart</button>
+        <button
+            class="btn btn-primary btn-add-to-cart round"
+            (click)="onAddToCart()"
+        >
+            Add to Cart
+        </button>
     </div>
     <div class="row">
         <p>{{product?.description}}</p>

@@ -25,7 +25,7 @@ export class AuthInterceptor implements HttpInterceptor {
 		}
 
 		const authReq = request.clone({
-			headers: request.headers.set('Authorization', accessToken)
+			headers: request.headers.set('Authorization', 'Bearer ' + accessToken)
 		});
 
 		return authReq;
@@ -37,7 +37,9 @@ export class AuthInterceptor implements HttpInterceptor {
 	}
 
 	handleResponseError(error: any, request: HttpRequest<any>, next: HttpHandler): Observable<any> {
-		if (error.status != 401) {
+		let useAuthentication = request.context.get(USE_AUTHENTICATION);
+		
+		if (error.status != 401 || !useAuthentication) {
 			return throwError(error);
 		}
 
