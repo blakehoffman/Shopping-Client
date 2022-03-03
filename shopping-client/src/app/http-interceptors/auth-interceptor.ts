@@ -80,7 +80,6 @@ export class AuthInterceptor implements HttpInterceptor {
 			authRequest = this.addAuthHeader(request, accessToken);
 		}
 
-		console.log(authRequest)
 		return next.handle(authRequest).pipe(
 			catchError(error => this.handleResponseError(error, request, next))
 		);

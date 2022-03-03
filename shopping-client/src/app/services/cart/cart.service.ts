@@ -97,21 +97,19 @@ export class CartService {
                 //only add products that don't exist in the saved user's cart so there are no duplicates
                 if (!foundProduct) {
                     userCart.products.push(product);
+
+                    //save local products that were not attached to user account
+                    let addCartProductDTO: AddCartProductDTO = {
+                        id: product.id,
+                        quantity: product.quantity
+                    };
+
+                    this._apiService.addProductToCart(userCart.id, addCartProductDTO, false).subscribe();
                 }
-
-                //save local products that were not attached to user account
-                let addCartProductDTO: AddCartProductDTO = {
-                    id: product.id,
-                    quantity: product.quantity
-                };
-
-                this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false);
             }
         }
-        else {
-            this.products = userCart.products;
-        }
 
+        this.products = userCart.products;
         this.cartId = userCart.id;
         this.updateCartInLocalStorage();
     }
@@ -133,52 +131,22 @@ export class CartService {
         };
 
         var observable = new Observable<void>((observer) => {
-            //if current user's cart isn't fetched, fetch it if they are logged in
             if (this._authService.isLoggedIn) {
-                if (this.cartId == undefined) {
-                    this.getUserCart()
-                        .pipe(
-                            mergeMap((cart) => {
-                                if (cart) {
-                                    this.cartId = cart.id;
-                                    this.products = cart.products;
-                                }
+                this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false)
+                    .pipe(
+                        map(httpResult => {
+                            if (!httpResult.succeeded) {
+                                this._alertService.error(httpResult.errors.join('\n'));
+                            }
 
-                                return this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false);
-                            }),
-                            map(httpResult => {
-                                if (!httpResult.succeeded) {
-                                    this._alertService.error(httpResult.errors.join('\n'));
-                                }
-
-                                observer.complete();
-                            }),
-                            catchError((error) => {
-                                observer.error(error);
-                                return this.handleError(error)
-                            }),
-                            finalize(() => this.addProductToLocalCart(cartProductToAdd))
-                        ).subscribe();
-
-                    this.addProductToLocalCart(cartProductToAdd);
-                }
-                else {
-                    this._apiService.addProductToCart((this.cartId as string), addCartProductDTO, false)
-                        .pipe(
-                            map(httpResult => {
-                                if (!httpResult.succeeded) {
-                                    this._alertService.error(httpResult.errors.join('\n'));
-                                }
-
-                                observer.complete();
-                            }),
-                            catchError((error) => {
-                                observer.error(error);
-                                return this.handleError(error);
-                            }),
-                            finalize(() => this.addProductToLocalCart(cartProductToAdd))
-                        ).subscribe();
-                }
+                            observer.complete();
+                        }),
+                        catchError((error) => {
+                            observer.error(error);
+                            return this.handleError(error);
+                        }),
+                        finalize(() => this.addProductToLocalCart(cartProductToAdd))
+                    ).subscribe();
             }
             else {
                 this.addProductToLocalCart(cartProductToAdd);
@@ -207,7 +175,7 @@ export class CartService {
                     }),
                     tap(cartCreated => {
                         if (cartCreated) {
-                            //save products to user's cart
+                            //save local products to user's new cart
                             for (let product of this.products) {
                                 let addCartProductDTO: AddCartProductDTO = {
                                     id: product.id,
@@ -231,66 +199,29 @@ export class CartService {
     }
 
     removeProductFromCart(cartProductToRemove: CartProductDTO): Observable<void> {
-        let cartProduct = this.products.find(product => product.id == cartProductToRemove.id);
-
         var observable = new Observable<void>((observer) => {
-            if (!cartProduct) {
-                observer.complete();
-                return;
-            }
-
             if (this._authService.isLoggedIn) {
-                //get cart if it isn't present
-                if (this.cartId == undefined) {
-                    this.getUserCart()
-                        .pipe(
-                            mergeMap((cart) => {
-                                if (cart) {
-                                    this.cartId = cart.id;
-                                    this.products = cart.products;
-                                }
+                this._apiService.deleteCartProduct((this.cartId as string), cartProductToRemove.id, false)
+                    .pipe(
+                        tap(httpResult => {
+                            if (!httpResult.succeeded) {
+                                this._alertService.error(httpResult.errors.join('\n'));
+                            }
 
-                                return this._apiService.deleteCartProduct((this.cartId as string), cartProductToRemove.id, false);
-                            }),
-                            map(httpResult => {
-                                if (!httpResult.succeeded) {
-                                    this._alertService.error(httpResult.errors.join('\n'));
-                                }
+                            observer.complete();
+                        }),
+                        catchError((error) => {
+                            observer.error(error);
+                            return this.handleError(error)
+                        })
+                    ).subscribe();
 
-                                observer.complete();
-                            }),
-                            catchError((error) => {
-                                observer.error(error);
-                                return this.handleError(error)
-                            })
-                        );
-
-                    this.deleteProductFromLocalCart(cartProductToRemove);
-                    return;
-                }
-                else {
-                    this._apiService.deleteCartProduct((this.cartId as string), cartProductToRemove.id, false)
-                        .pipe(
-                            tap(httpResult => {
-                                if (!httpResult.succeeded) {
-                                    this._alertService.error(httpResult.errors.join('\n'));
-                                }
-
-                                observer.complete();
-                            }),
-                            catchError((error) => {
-                                observer.error(error);
-                                return this.handleError(error)
-                            })
-                        );
-
-                    this.deleteProductFromLocalCart(cartProductToRemove);
-                    return;
-                }
+                this.deleteProductFromLocalCart(cartProductToRemove);
             }
-
-            this.deleteProductFromLocalCart(cartProductToRemove);
-            observer.complete();
+            else {
+                this.deleteProductFromLocalCart(cartProductToRemove);
+                observer.complete();
+            }
         });
 
         return observable;
