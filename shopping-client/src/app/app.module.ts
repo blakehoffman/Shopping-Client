@@ -13,6 +13,8 @@ import { ProductComponent } from './components/product/product.component';
 import { ProductPageComponent } from './pages/shopping/product/product.page.component';
 import { QuantityStepperComponent } from './components/quantity-stepper/quantity-stepper.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { ShoppingCartPageComponent } from './pages/shopping/shopping-cart/shopping-cart.page.component';
+import { ShoppingCartProductComponent } from './components/shopping-cart-product/shopping-cart-product.component';
 
 @NgModule({
     declarations: [
@@ -24,6 +26,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
         ProductPageComponent,
         QuantityStepperComponent,
         NavbarComponent,
+        ShoppingCartPageComponent,
+        ShoppingCartProductComponent,
     ],
     imports: [
         AppRoutingModule,

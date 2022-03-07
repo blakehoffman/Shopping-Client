@@ -23,5 +23,4 @@ export class ProductComponent implements OnInit {
     navigateToProductPage() {
         this._router.navigate(['/products/', this.product?.id], { state: { product: this.product } });
     }
-
 }

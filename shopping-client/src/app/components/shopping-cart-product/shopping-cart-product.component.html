@@ -1,0 +1,20 @@
+<div class="card mt-3 clickable">
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <label>{{product?.name}}</label>
+                </div>
+                <div class="col text-end fw-bold">
+                    <label>${{product?.price}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <quantity-stepper (quantityEvent)="increaseProductQuantity($event, product!.id)"></quantity-stepper>
+                
+            </div>
+            <a
+                class="stretched-link"
+                (click)="navigateToProductPage()"
+            ></a>
+        </div>
+</div>

@@ -226,4 +226,9 @@ export class CartService {
 
         return observable;
     }
+
+    updateProductQuantity(productId: string, quantity: number) {
+        let product = this.products.find(cartProduct => cartProduct.id == productId);
+        product!.quantity = quantity;
+    }
 }
