@@ -6,7 +6,7 @@ import { ApiService } from '../api/api.service';
 import { AuthService } from '../auth/auth.service';
 import { v4 } from 'uuid';
 import { catchError, finalize, map, mergeMap, tap } from 'rxjs/operators';
-import { Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { AlertService } from '../alert/alert.service';
 import { AddCartProductDTO } from 'src/app/dtos/add-cart-product-dto';
 
@@ -14,6 +14,8 @@ import { AddCartProductDTO } from 'src/app/dtos/add-cart-product-dto';
     providedIn: 'root'
 })
 export class CartService {
+    private productsSubject = new BehaviorSubject<Array<CartProductDTO>>([]);
+
     cartId: string | undefined;
     products: Array<CartProductDTO> = [];
 
@@ -22,6 +24,10 @@ export class CartService {
         private _apiService: ApiService,
         private _authService: AuthService) {
         this.loadCart();
+    }
+
+    get productsChange(): Observable<Array<CartProductDTO>> {
+        return this.productsSubject.asObservable();
     }
 
     private addProductToLocalCart(cartProduct: CartProductDTO): void {
@@ -87,6 +93,7 @@ export class CartService {
         let cart: CartDTO = JSON.parse(cartString);
         this.cartId = cart.id;
         this.products = cart.products;
+        this.productsSubject.next(cart.products);
     }
 
     private mergeCarts(userCart: CartDTO): void {
@@ -110,6 +117,7 @@ export class CartService {
         }
 
         this.products = userCart.products;
+        this.productsSubject.next(userCart.products);
         this.cartId = userCart.id;
         this.updateCartInLocalStorage();
     }
@@ -154,6 +162,29 @@ export class CartService {
 
                 observer.complete();
             }
+        });
+
+        return observable;
+    }
+
+    deleteProductFromCart(cartProduct: CartProductDTO): Observable<void> {
+        var observable = new Observable<void>((observer) => {
+            this.deleteProductFromLocalCart(cartProduct);
+            this._apiService.deleteCartProduct((this.cartId as string), cartProduct.id, false)
+                .pipe(
+                    map(httpResult => {
+                        if (!httpResult.succeeded) {
+                            this._alertService.error(httpResult.errors.join('\n'));
+                        }
+
+                        observer.complete();
+                    }),
+                    catchError((error) => {
+                        observer.error(error);
+                        return this.handleError(error);
+                    }),
+                    finalize(() => this.updateCartInLocalStorage())
+                ).subscribe();
         });
 
         return observable;
@@ -230,5 +261,7 @@ export class CartService {
     updateProductQuantity(productId: string, quantity: number) {
         let product = this.products.find(cartProduct => cartProduct.id == productId);
         product!.quantity = quantity;
+
+        this.updateCartInLocalStorage();
     }
 }

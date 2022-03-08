@@ -1,20 +1,26 @@
 <div class="card mt-3 clickable">
-        <div class="card-body">
-            <div class="row">
-                <div class="col">
-                    <label>{{product?.name}}</label>
-                </div>
-                <div class="col text-end fw-bold">
-                    <label>${{product?.price}}</label>
-                </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <label>{{product?.name}}</label>
             </div>
-            <div class="row">
-                <quantity-stepper (quantityEvent)="increaseProductQuantity($event, product!.id)"></quantity-stepper>
-                
+            <div class="col text-end fw-bold">
+                <label>${{product?.price}}</label>
             </div>
-            <a
-                class="stretched-link"
-                (click)="navigateToProductPage()"
-            ></a>
         </div>
+        <div class="row">
+            <quantity-stepper (quantityEvent)="increaseProductQuantity($event, product!.id)"></quantity-stepper>
+            <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="deleteProduct()"
+            >
+                <i class="bi bi-dash-circle"></i>
+            </button>
+        </div>
+        <a
+            class="stretched-link"
+            (click)="navigateToProductPage()"
+        ></a>
+    </div>
 </div>

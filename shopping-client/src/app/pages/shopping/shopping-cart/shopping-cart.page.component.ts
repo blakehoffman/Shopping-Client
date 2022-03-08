@@ -8,13 +8,13 @@ import { CartService } from 'src/app/services/cart/cart.service';
     styleUrls: ['./shopping-cart.page.component.css']
 })
 export class ShoppingCartPageComponent implements OnInit {
-    products: Array<CartProductDTO>;
+    products: Array<CartProductDTO> = [];
 
-    constructor(private _cartService: CartService) {
-        this.products = _cartService.products;
-    }
+    constructor(private _cartService: CartService) {}
 
     ngOnInit(): void {
+        this._cartService.productsChange
+            .subscribe(products => this.products = products);
     }
 
 }

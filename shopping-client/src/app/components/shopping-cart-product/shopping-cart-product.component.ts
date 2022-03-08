@@ -18,6 +18,10 @@ export class ShoppingCartProductComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    deleteProduct(): void {
+        this._cartService.deleteProductFromCart(this.product!).subscribe();
+    }
+
     increaseProductQuantity(quantity: number, productId: string): void {
         this._cartService.updateProductQuantity(productId, quantity);
     }
