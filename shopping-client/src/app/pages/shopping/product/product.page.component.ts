@@ -23,6 +23,10 @@ export class ProductPageComponent implements OnInit {
         this.product = this._router.getCurrentNavigation()?.extras?.state?.product;
     }
 
+    increaseProductQuantity(quantity: number): void {
+        this.quantity = quantity;
+    }
+
     ngOnInit(): void {
         let productId = this._activatedRoute.snapshot.paramMap.get('id');
 
@@ -30,10 +34,6 @@ export class ProductPageComponent implements OnInit {
             this._apiService.getProduct(productId)
                 .subscribe(result => this.product = result);
         }
-    }
-
-    increaseProductQuantity(quantity: number): void {
-        this.quantity = quantity;
     }
 
     onAddToCart(): void {
